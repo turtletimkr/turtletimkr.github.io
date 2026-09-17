@@ -104,12 +104,18 @@ th.gl,td.gl{border-left:1px solid var(--line)}
 td.save{color:var(--key);font-weight:700}
 td.base{color:var(--faint)}
 td.hit{color:var(--key);font-weight:700}
+/* 기준 줄이 제일 중요하다. 안들을 작게·회색으로 내려 기준이 살게 한다 (260918) */
+tbody tr:not(:first-child) td{font-size:12.5px;color:var(--mute)}
+tbody tr:not(:first-child) td.save,
+tbody tr:not(:first-child) td.hit,
+tbody tr:not(:first-child) td.up,
+tbody tr:not(:first-child) td.down{color:var(--mute);font-weight:400}
 .grp th{border-bottom:0;padding-bottom:0;color:var(--key);font-weight:700;
   text-align:center;font-size:10.5px}
 th.gl,td.gl{border-left:1px solid var(--line)}
 td.save{color:var(--key);font-weight:700}
-tbody tr:first-child td{color:var(--mute)}
-tbody tr:first-child td.base{color:var(--faint);font-size:11px}
+tbody tr:first-child td{color:var(--ink);font-weight:600}
+tbody tr:first-child td.base{color:var(--faint);font-weight:400;font-size:11px}
 
 .foot{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;
   font-size:12px;color:var(--faint);line-height:1.5;margin:3px 2px 0}
@@ -164,11 +170,11 @@ tbody tr:first-child td.base{color:var(--faint);font-size:11px}
   <h2>현재 보유 종목</h2>
   <div class="r5">
     <div class="ch"><span class="lb">현재가</span>
-      <input id="now" inputmode="decimal" value="50000" aria-label="현재가"><span class="u uP">원</span></div>
+      <input id="now" inputmode="decimal" aria-label="현재가"><span class="u uP">원</span></div>
     <div class="ch"><span class="lb">평단</span>
-      <input id="avg" inputmode="decimal" value="60000" aria-label="평단"><span class="u uP">원</span></div>
+      <input id="avg" inputmode="decimal" aria-label="평단"><span class="u uP">원</span></div>
     <div class="ch"><span class="lb">수량</span>
-      <input id="qty" inputmode="decimal" value="100" aria-label="수량"><span class="u uQ">주</span></div>
+      <input id="qty" inputmode="decimal" aria-label="수량"><span class="u uQ">주</span></div>
     <div class="ch o"><span class="lb">손익</span>
       <span class="v" id="plR">—</span><span class="u">%</span></div>
     <div class="ch o"><span class="lb">평가손익</span>
@@ -180,7 +186,7 @@ tbody tr:first-child td.base{color:var(--faint);font-size:11px}
   <h2><span class="no">1</span>목표 평단 <em>— 이 평단을 만드는 데 드는 금액입니다</em></h2>
   <div class="r5">
     <div class="ch"><span class="lb">목표평단</span>
-      <input id="tgt" inputmode="decimal" value="55000" aria-label="목표 평단"><span class="u uP">원</span></div>
+      <input id="tgt" inputmode="decimal" aria-label="목표 평단"><span class="u uP">원</span></div>
   </div>
   <div class="r5">
     <div class="ch"><span class="lb">매수가</span>
@@ -198,7 +204,7 @@ tbody tr:first-child td.base{color:var(--faint);font-size:11px}
   <div class="tw"><table>
     <thead>
       <tr><th>안</th><th>내림폭</th><th>매수가</th>
-        <th class="gl">드는 금액</th><th>매수 수량</th><th>기준보다 아끼는 금액</th>
+        <th class="gl">필요 금액</th><th>매수 수량</th><th>기준보다 아끼는 금액</th>
         <th class="gl">수량</th><th>평단</th><th>손익</th><th>평가손익</th></tr>
     </thead>
     <tbody id="tb1"></tbody>
@@ -209,7 +215,7 @@ tbody tr:first-child td.base{color:var(--faint);font-size:11px}
   <h2><span class="no">2</span>보유 현금 <em>— 이 금액을 넣었을 때 낮아지는 탈출 평단입니다</em></h2>
   <div class="r5">
     <div class="ch"><span class="lb">보유 현금</span>
-      <input id="cash" inputmode="decimal" value="5000000" aria-label="보유 현금"><span class="u uM">원</span></div>
+      <input id="cash" inputmode="decimal" aria-label="보유 현금"><span class="u uM">원</span></div>
   </div>
   <div class="r5">
     <div class="ch"><span class="lb">매수가</span>
@@ -227,7 +233,7 @@ tbody tr:first-child td.base{color:var(--faint);font-size:11px}
   <div class="tw"><table>
     <thead>
       <tr><th>안</th><th>내림폭</th><th>매수가</th>
-        <th class="gl">드는 금액</th><th>매수 수량</th><th>기준보다 내려가는 폭</th>
+        <th class="gl">필요 금액</th><th>매수 수량</th><th>기준보다 내려가는 폭</th>
         <th class="gl">수량</th><th>평단</th><th>손익</th><th>평가손익</th></tr>
     </thead>
     <tbody id="tb2"></tbody>
@@ -537,9 +543,9 @@ tbody tr:first-child td.base{color:var(--faint);font-size:11px}
     $("frac").checked = coin;   /* 주식은 정수 · 코인은 소수. 바꾼 뒤 직접 켜고 끌 수 있다 */
     IN.forEach(function(id){ var e = $(id); e.value = commify(e.value); fit(e); });
     relabel();
-    /* 시장이 바뀌면 아예 다른 자산이다. 아직 아무것도 안 넣었으면 그 시장 예시로 갈아탄다.
-       직접 넣으신 뒤라면 건드리지 않는다 — 값이 날아가는 것이 더 나쁘다 */
-    if (!touched) demo();
+    /* 예시값을 미리 넣지 않는다 — 일부만 고치면 남은 예시값이 그대로 계산에 들어간다.
+       260918 에 BCH 에서 수량이 예시값 0.1 로 남아 필요 금액이 틀리게 나왔다.
+       값은 [예시] 를 눌렀을 때만 들어온다 */
   }
   function demo(){
     /* 어느 시장이든 현재가 10 : 평단 12 : 목표 11 로 모양을 맞춘다.
@@ -569,7 +575,7 @@ tbody tr:first-child td.base{color:var(--faint);font-size:11px}
   $("fee").addEventListener("change", render);
   $("fee").addEventListener("input", function(){ feeTouched = true; });
   $("frac").addEventListener("change", render);
-  $("cur").addEventListener("change", function(){ relabel(); if (!touched) demo(); });
+  $("cur").addEventListener("change", relabel);
   $("mKr").addEventListener("click",   function(){ setMarket("kr");   });
   $("mUs").addEventListener("click",   function(){ setMarket("us");   });
   $("mCoin").addEventListener("click", function(){ setMarket("coin"); });
