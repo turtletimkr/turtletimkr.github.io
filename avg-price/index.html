@@ -33,13 +33,13 @@ body{margin:0;background:var(--bg);color:var(--ink);font-size:15px;line-height:1
 .oi{display:flex;align-items:center;gap:6px;font-size:13.5px;color:var(--mute);white-space:nowrap}
 .oi input[type=number]{width:68px;padding:3px 6px;border:1px solid var(--line2);border-radius:5px;
   background:var(--card2);color:var(--ink);font:inherit;font-size:14.5px;text-align:right;
-  font-variant-numeric:tabular-nums;font-family:ui-monospace,"Consolas","D2Coding",monospace}
+  font-variant-numeric:tabular-nums;}
 .oi select{padding:3px 6px;border:1px solid var(--line2);border-radius:5px;
   background:var(--card2);color:var(--ink);font:inherit;font-size:14.5px}
 .oi label{cursor:pointer}
 .oi input.w{width:92px;padding:3px 6px;border:1px solid var(--line2);border-radius:5px;
   background:var(--card2);color:var(--ink);font:inherit;font-size:14.5px;text-align:right;
-  font-variant-numeric:tabular-nums;font-family:ui-monospace,"Consolas","D2Coding",monospace}
+  font-variant-numeric:tabular-nums;}
 .oi input.w::placeholder{color:var(--faint);font-size:11px}
 .oi b{font-weight:400}
 .oi[hidden]{display:none}   /* .oi 의 display:flex 가 [hidden] 을 이긴다 */
@@ -71,8 +71,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-size:15px;line-height:1
   border-right:1px solid var(--line);font-size:12.5px;color:var(--mute);white-space:nowrap}
 .ch input,.ch .v{flex:1;min-width:0;border:0;background:transparent;color:var(--ink);
   padding:7px 7px;font:inherit;font-size:18px;text-align:right;line-height:1.3;
-  font-variant-numeric:tabular-nums;font-family:ui-monospace,"Consolas","D2Coding",monospace;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  font-variant-numeric:tabular-nums;  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 /* 글자를 줄이면 위로 붙는다 — 세로 가운데로 맞춘다 */
 .ch .v{display:flex;align-items:center;justify-content:flex-end}
 .ch input:focus{outline:2px solid var(--key);outline-offset:-2px}
@@ -96,7 +95,7 @@ th,td{padding:6px 5px;border-bottom:1px solid var(--line);text-align:right;
 th{color:var(--mute);font-weight:600;font-size:12.5px;white-space:nowrap;
   border-bottom-color:var(--line2)}
 th:first-child,td:first-child{text-align:left}
-td{font-family:ui-monospace,"Consolas","D2Coding",monospace;white-space:nowrap}
+td{;white-space:nowrap}
 tr:last-child td{border-bottom:0}
 .tw{overflow-x:auto;-webkit-overflow-scrolling:touch;min-width:0;
   margin-top:9px;border-top:1px solid var(--line2);padding-top:5px}
@@ -203,8 +202,8 @@ tbody tr:first-child td.base{color:var(--faint);font-weight:400;font-size:11px}
   <div class="warn" id="w1" hidden></div>
   <div class="tw"><table>
     <thead>
-      <tr><th>안</th><th>내림폭</th><th>매수가</th>
-        <th class="gl">필요 금액</th><th>매수 수량</th><th>기준보다 아끼는 금액</th>
+      <tr><th>구분</th><th>내림폭</th><th>매수가</th>
+        <th class="gl">필요 금액</th><th>매수 수량</th><th>더 아끼는 금액</th>
         <th class="gl">수량</th><th>평단</th><th>손익</th><th>평가손익</th></tr>
     </thead>
     <tbody id="tb1"></tbody>
@@ -232,8 +231,8 @@ tbody tr:first-child td.base{color:var(--faint);font-weight:400;font-size:11px}
   <div class="warn" id="w2" hidden></div>
   <div class="tw"><table>
     <thead>
-      <tr><th>안</th><th>내림폭</th><th>매수가</th>
-        <th class="gl">필요 금액</th><th>매수 수량</th><th>기준보다 내려가는 폭</th>
+      <tr><th>구분</th><th>내림폭</th><th>매수가</th>
+        <th class="gl">필요 금액</th><th>매수 수량</th><th>더 내려가는 평단</th>
         <th class="gl">수량</th><th>평단</th><th>손익</th><th>평가손익</th></tr>
     </thead>
     <tbody id="tb2"></tbody>
@@ -437,7 +436,7 @@ tbody tr:first-child td.base{color:var(--faint);font-weight:400;font-size:11px}
     }
     function head(i, pb){
       return (i === 0
-          ? "<td>기준</td><td class='hit'>—</td>"
+          ? "<td>결과</td><td class='hit'>—</td>"
           : "<td>" + i + "안</td><td class='hit'>−" + CUT[i] + "%</td>") +
              "<td>" + price(pb) + "</td>";
     }
@@ -477,7 +476,7 @@ tbody tr:first-child td.base{color:var(--faint);font-weight:400;font-size:11px}
           var c = q * pb * f;
           var a = (P0 * Q0 + c) / (Q0 + q);
           var sv = "—";
-          if (i === 0){ baseC = c; sv = "기준"; }
+          if (i === 0){ baseC = c; sv = "—"; }
           else if (isFinite(baseC)) sv = "−" + money(baseC - c);
           body = "<td class='gl'>" + money(c) + "</td><td>" + qty(q) +
                  "</td><td class='" + (i === 0 ? "base" : "save") + "'>" + sv + "</td>" +
@@ -498,7 +497,7 @@ tbody tr:first-child td.base{color:var(--faint);font-weight:400;font-size:11px}
           var c = q * pb * f;
           var a = (P0 * Q0 + c) / (Q0 + q);
           var dv = "—";
-          if (i === 0){ baseA = a; dv = "기준"; }
+          if (i === 0){ baseA = a; dv = "—"; }
           else if (isFinite(baseA)) dv = "−" + price(baseA - a);
           body = "<td class='gl'>" + money(c) + "</td><td>" + qty(q) +
                  "</td><td class='" + (i === 0 ? "base" : "save") + "'>" + dv + "</td>" +
